@@ -5,38 +5,43 @@ import { buildGraphPayload } from "@/lib/graph";
 
 type ChatMsg = { role: "user" | "assistant"; text: string };
 
-interface AppState {
+type GraphView = 'hierarchy' | 'dependencies';
+
+interface AppStore {
   currentSrtId: string | null;
   brs: BR[];
-  graph: GraphPayload;
-  chat: ChatMsg[];
-  createdItems: { type: string; id: string; ref: string }[];
   selectedBrId: string | null;
-  setSrt: (id: string, brs: BR[]) => void;
+  createdItems: any[];
+  graphView: 'hierarchy' | 'dependencies';
+  isGraphMaximized: boolean;
+  isCanvasCollapsed: boolean;
+  setSrt: (srtId: string, brs: BR[]) => void;
   setBrs: (brs: BR[]) => void;
-  setGraph: (graph: GraphPayload) => void;
-  addChat: (m: ChatMsg) => void;
-  setCreatedItems: (items: { type: string; id: string; ref: string }[]) => void;
-  selectBr: (id: string | null) => void;
+  selectBr: (brId: string | null) => void;
+  setCreatedItems: (items: any[]) => void;
+  setGraphView: (view: 'hierarchy' | 'dependencies') => void;
+  toggleGraphMaximized: () => void;
+  toggleCanvasCollapsed: () => void;
 }
 
-export const useAppStore = create<AppState>((set, get) => ({
+export const useAppStore = create<AppStore>((set, get) => ({
   currentSrtId: null,
   brs: [],
-  graph: { nodes: [], edges: [] },
-  chat: [],
   createdItems: [],
   selectedBrId: null,
+  graphView: 'hierarchy',
+  isGraphMaximized: false,
+  isCanvasCollapsed: true,
   setSrt: (id, brs) =>
     set({
       currentSrtId: id,
       brs,
-      graph: { nodes: [], edges: [] }, // Initialize empty, will be built by Canvas
-      selectedBrId: brs[0]?.br_id ?? null
+      selectedBrId: null
     }),
-  setBrs: (brs) => set({ brs, graph: { nodes: [], edges: [] } }),
-  setGraph: (graph) => set({ graph }),
-  addChat: (m) => set({ chat: [...get().chat, m] }),
+  setBrs: (brs) => set({ brs }),
   setCreatedItems: (items) => set({ createdItems: items }),
-  selectBr: (id) => set({ selectedBrId: id })
+  selectBr: (id) => set({ selectedBrId: id }),
+  setGraphView: (view) => set({ graphView: view }),
+  toggleGraphMaximized: () => set({ isGraphMaximized: !get().isGraphMaximized }),
+  toggleCanvasCollapsed: () => set({ isCanvasCollapsed: !get().isCanvasCollapsed })
 }));

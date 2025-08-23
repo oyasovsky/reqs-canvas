@@ -11,7 +11,19 @@ export default function RightPane() {
   const [creating, setCreating] = useState(false);
   const br = useMemo(() => brs.find(b => b.br_id === selectedBrId) || null, [brs, selectedBrId]);
 
-  if (!br) return <aside className="card p-3">Select a BR</aside>;
+  if (!br) return (
+    <aside className="card p-6 overflow-y-auto h-full">
+      <div className="text-center py-12">
+        <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+          <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+        </div>
+        <h3 className="text-lg font-semibold text-slate-700 mb-2">Select a Business Requirement</h3>
+        <p className="text-slate-500">Choose a BR from the sidebar to view details</p>
+      </div>
+    </aside>
+  );
 
   function updateBr(mut: (b: BR) => BR) {
     if (!br) return; // Early return if br is null
@@ -89,82 +101,123 @@ export default function RightPane() {
   }
 
   return (
-    <aside className="card p-3 overflow-auto">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="font-semibold">{br.br_id}: {br.title}</h3>
-        <div className="flex gap-2">
-          <button className="btn btn-outline" onClick={suggestApps}>Suggest Apps</button>
-          <button className="btn btn-outline" onClick={suggestDeps}>Suggest Deps</button>
+    <aside className="card p-6 overflow-y-auto h-full">
+      <div className="mb-6">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-slate-800 mb-2">{br.br_id}</h3>
+            <h4 className="text-base text-slate-700 font-medium mb-3">{br.title}</h4>
+          </div>
         </div>
+        <div className="flex gap-2 mb-4">
+          <button className="btn btn-outline text-xs" onClick={suggestApps}>Suggest Apps</button>
+          <button className="btn btn-outline text-xs" onClick={suggestDeps}>Suggest Deps</button>
+        </div>
+        <p className="text-sm text-slate-600 leading-relaxed">{br.description}</p>
       </div>
-      <p className="text-sm text-gray-700 mb-3">{br.description}</p>
 
-      <div className="mb-3">
-        <div className="text-xs font-semibold text-gray-500 mb-1">Capabilities</div>
+      <div className="mb-6">
+        <div className="flex items-center space-x-2 mb-3">
+          <div className="w-1.5 h-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+          <h4 className="text-sm font-semibold text-slate-700">Capabilities</h4>
+        </div>
         <div className="flex flex-wrap gap-2">
           {br.capabilities.map((c, idx) => (<span key={idx} className="badge">{c}</span>))}
         </div>
       </div>
 
-      <div className="mb-3">
-        <div className="text-xs font-semibold text-gray-500 mb-1">Feature</div>
+      <div className="mb-6">
+        <div className="flex items-center space-x-2 mb-3">
+          <div className="w-1.5 h-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+          <h4 className="text-sm font-semibold text-slate-700">Feature</h4>
+        </div>
         {br.features && br.features.length > 0 ? (
-          <div className="border rounded-lg p-2">
-            <div className="font-medium">{br.features[0]?.title}</div>
-            <div className="text-sm text-gray-600">{br.features[0]?.description}</div>
-            <div className="mt-2 flex gap-2">
-              <button className="btn btn-outline" onClick={draftAC}>Draft Acceptance Criteria</button>
-              <button className="btn btn-outline" onClick={draftNFRs}>Draft NFRs</button>
+          <div className="bg-gradient-to-br from-blue-50/50 to-indigo-50/50 border border-blue-200/30 rounded-xl p-4">
+            <div className="font-semibold text-slate-800 mb-2">{br.features[0]?.title}</div>
+            <div className="text-sm text-slate-600 mb-4 leading-relaxed">{br.features[0]?.description}</div>
+            <div className="flex gap-2 mb-4">
+              <button className="btn btn-outline text-xs" onClick={draftAC}>Draft AC</button>
+              <button className="btn btn-outline text-xs" onClick={draftNFRs}>Draft NFRs</button>
             </div>
-            <div className="mt-2">
-              <div className="text-xs font-semibold text-gray-500">Acceptance Criteria</div>
-              <ul className="list-disc list-inside text-sm">
-                {(br.features[0]?.acceptance_criteria || []).map((a, idx) => (<li key={idx}>{a}</li>))}
-              </ul>
-            </div>
-            <div className="mt-2">
-              <div className="text-xs font-semibold text-gray-500">NFRs</div>
-              <ul className="list-disc list-inside text-sm">
-                {(br.features[0]?.nfrs || []).map((n, idx) => (<li key={idx}>{n.category}: {n.target}</li>))}
-              </ul>
+            <div className="space-y-4">
+              <div>
+                <div className="text-xs font-semibold text-slate-600 mb-2">Acceptance Criteria</div>
+                <ul className="space-y-1">
+                  {(br.features[0]?.acceptance_criteria || []).map((a, idx) => (
+                    <li key={idx} className="text-sm text-slate-700 flex items-start space-x-2">
+                      <span className="w-1 h-1 bg-blue-400 rounded-full mt-2 flex-shrink-0"></span>
+                      <span>{a}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <div className="text-xs font-semibold text-slate-600 mb-2">Non-Functional Requirements</div>
+                <ul className="space-y-1">
+                  {(br.features[0]?.nfrs || []).map((n, idx) => (
+                    <li key={idx} className="text-sm text-slate-700 flex items-start space-x-2">
+                      <span className="w-1 h-1 bg-indigo-400 rounded-full mt-2 flex-shrink-0"></span>
+                      <span><span className="font-medium">{n.category}:</span> {n.target}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         ) : (
-          <div className="text-gray-400 text-sm">No features defined</div>
+          <div className="text-center py-6 text-slate-500 text-sm">No features defined</div>
         )}
       </div>
 
-      <div className="mb-3">
-        <div className="text-xs font-semibold text-gray-500 mb-1">Impacted Apps</div>
+      <div className="mb-6">
+        <div className="flex items-center space-x-2 mb-3">
+          <div className="w-1.5 h-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+          <h4 className="text-sm font-semibold text-slate-700">Impacted Applications</h4>
+        </div>
         <div className="flex flex-wrap gap-2">
           {(br.impacted_applications || []).map((a, idx) => (<span key={idx} className="badge">{a.app}</span>))}
         </div>
       </div>
 
-      <div className="mb-3">
-        <div className="text-xs font-semibold text-gray-500 mb-1">Checklist</div>
-        <table className="w-full text-sm">
-          <tbody>
+      <div className="mb-6">
+        <div className="flex items-center space-x-2 mb-3">
+          <div className="w-1.5 h-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+          <h4 className="text-sm font-semibold text-slate-700">Checklist</h4>
+        </div>
+        <div className="bg-gradient-to-br from-slate-50/50 to-blue-50/50 border border-slate-200/50 rounded-xl p-4">
+          <div className="space-y-2">
             {Object.entries(br.checklist || {}).map(([k, v]) => (
-              <tr key={k} className="border-t">
-                <td className="py-1 pr-2 text-gray-500">{k}</td>
-                <td className="py-1">{v}</td>
-              </tr>
+              <div key={k} className="flex items-center justify-between py-2 border-b border-slate-200/50 last:border-b-0">
+                <span className="text-sm text-slate-600 font-medium">{k.replace(/_/g, ' ')}</span>
+                <span className="text-lg">{v}</span>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
       </div>
 
-      <div className="mb-3">
-        <div className="text-xs font-semibold text-gray-500 mb-1">Missing Info</div>
-        <ul className="list-disc list-inside text-sm">
-          {(br.missing_info || []).map((m, idx) => (<li key={idx}><span className="font-medium">{m.item}</span>: {m.prompt}</li>))}
-        </ul>
+      <div className="mb-6">
+        <div className="flex items-center space-x-2 mb-3">
+          <div className="w-1.5 h-1.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full"></div>
+          <h4 className="text-sm font-semibold text-slate-700">Missing Information</h4>
+        </div>
+        {(br.missing_info || []).length > 0 ? (
+          <div className="space-y-2">
+            {(br.missing_info || []).map((m, idx) => (
+              <div key={idx} className="bg-gradient-to-r from-amber-50/50 to-orange-50/50 border border-amber-200/50 rounded-lg p-3">
+                <div className="font-medium text-amber-800 text-sm mb-1">{m.item}</div>
+                <div className="text-xs text-amber-700">{m.prompt}</div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-4 text-slate-500 text-sm">All information complete</div>
+        )}
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end pt-4 border-t border-slate-200/50">
         <button className="btn btn-primary" onClick={() => setConfirmOpen(true)} disabled={creating}>
-          {creating ? "Creating…" : "Create ADO items…"}
+          {creating ? "Creating…" : "Create ADO Items"}
         </button>
       </div>
 

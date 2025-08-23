@@ -188,12 +188,12 @@ export default function ChatDock() {
   }
 
   return (
-    <div className="h-32 bg-white border-t border-gray-200 p-4">
-      <div className="flex gap-2 mb-2 overflow-x-auto">
+    <div className="h-40 bg-gradient-to-r from-white/95 via-blue-50/80 to-indigo-50/80 backdrop-blur-md border-t border-blue-200/30 p-6 flex flex-col">
+      <div className="flex gap-2 mb-2 overflow-x-auto pb-2 flex-shrink-0">
         {INTENTS.map((intent) => (
           <button
             key={intent}
-            className="px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors text-sm whitespace-nowrap"
+            className="px-3 py-2 bg-gradient-to-r from-blue-100/80 to-indigo-100/80 text-blue-700 rounded-lg hover:from-blue-200/80 hover:to-indigo-200/80 transition-all duration-200 text-xs font-medium whitespace-nowrap border border-blue-200/50 backdrop-blur-sm"
             onClick={() => handleIntent(intent)}
           >
             {intent}
@@ -201,29 +201,34 @@ export default function ChatDock() {
         ))}
       </div>
       
-      <form onSubmit={handleSubmit} className="flex gap-2 mb-2">
+      <form onSubmit={handleSubmit} className="flex gap-3 mb-3 flex-shrink-0">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask me about the current SRT, BRs, or request assistance..."
-          className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="input flex-1 text-sm"
         />
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+          className="btn btn-primary text-sm"
         >
-          Ask Smart Assistant
+          Ask Assistant
         </button>
       </form>
       
-      <div className="h-16 overflow-y-auto space-y-2">
+      <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
         {messages.slice(-3).map((msg, idx) => (
-          <div key={idx} className="text-sm">
-            <div className="font-medium text-gray-700">Q: {msg.text}</div>
-            <div className="text-gray-600 whitespace-pre-line">{msg.response}</div>
+          <div key={idx} className="bg-white/70 backdrop-blur-sm rounded-xl p-3 border border-white/50 shadow-sm">
+            <div className="font-semibold text-slate-700 text-sm mb-2">Q: {msg.text}</div>
+            <div className="text-slate-600 text-sm leading-relaxed whitespace-pre-line">{msg.response}</div>
           </div>
         ))}
+        {messages.length === 0 && (
+          <div className="text-slate-500 text-sm text-center py-4">
+            Click an intent button or ask a question to get started
+          </div>
+        )}
       </div>
     </div>
   )

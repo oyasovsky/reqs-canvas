@@ -1,0 +1,6 @@
+.next
+.vscode
+node_modules
+.eslints.cjs
+.prettierrc
+package-lock.json
