@@ -11,6 +11,8 @@ import ReactFlow, {
   NodeTypes,
   Controls,
   Background,
+  Handle,
+  Position,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import { useAppStore } from '@/lib/store'
@@ -25,6 +27,8 @@ const nodeTypes: NodeTypes = {
         <div className="text-xs text-purple-500 bg-purple-200 px-2 py-1 rounded">SRT Root</div>
         <div className="text-xs text-purple-700 font-medium">{data.brCount} BRs</div>
       </div>
+      <Handle type="source" position={Position.Bottom} />
+      <Handle type="target" position={Position.Top} />
     </div>
   ),
   BR: ({ data }: { data: any }) => {
@@ -68,6 +72,8 @@ const nodeTypes: NodeTypes = {
             ))}
           </div>
         )}
+        <Handle type="target" position={Position.Top} />
+        <Handle type="source" position={Position.Bottom} />
       </div>
     )
   },
@@ -99,6 +105,8 @@ const nodeTypes: NodeTypes = {
             NFRs: {data.nfrs.slice(0, 2).map((nfr: any) => nfr.category).join(', ')}
           </div>
         )}
+        <Handle type="target" position={Position.Top} />
+        <Handle type="source" position={Position.Bottom} />
       </div>
     )
   },
@@ -114,6 +122,8 @@ const nodeTypes: NodeTypes = {
           </div>
         )}
       </div>
+      <Handle type="target" position={Position.Left} />
+      <Handle type="source" position={Position.Right} />
     </div>
   ),
 }
