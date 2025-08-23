@@ -1,11 +1,11 @@
 # BSSe Visual Assistant
 
-A POC web application that helps TPMs & SAs plan from SRT → Business Requirements → Capabilities → Features, visualize application dependencies, track completion status, and (on explicit confirmation) create mocked ADO items. All data is local/mocked. No external network calls.
+A POC web application that helps TPMs & SAs plan from SRT → Business Requirements → Capabilities → Functional Requirements (FRs), visualize application dependencies, track completion status, and (on explicit confirmation) create mocked ADO items. All data is local/mocked. No external network calls.
 
 ## Features
 
 - **SRT Workspace**: Manage 3 mocked SRTs with 8 Business Requirements each
-- **Visual Canvas**: React Flow-based graph showing BRs, Applications, and dependencies
+- **Visual Canvas**: React Flow-based graph showing SRTs, BRs, FRs, Applications, and dependencies
 - **BR Management**: Track completion status with checklist and missing info prompts
 - **Action Buttons**: Draft AC, NFRs, suggest apps/dependencies, create ADO items
 - **AI-Powered Chat**: OpenAI-integrated chat interface for intelligent assistance
@@ -110,12 +110,12 @@ Tests verify:
 
 ### Business Requirement (BR)
 - Title, description, and capabilities
-- Features with acceptance criteria, NFRs, risks/assumptions/constraints
+- Functional Requirements (FRs) with acceptance criteria, NFRs, risks/assumptions/constraints
 - Impacted applications and app dependencies
 - Checklist status and missing information prompts
 
 ### Graph Elements
-- **Nodes**: BR, Application, Epic, Feature
+- **Nodes**: SRT, BR, FR, Application
 - **Edges**: impacts (BR→App), typed dependencies (App→App)
 
 ## Guardrails

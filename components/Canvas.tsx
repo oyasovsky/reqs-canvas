@@ -56,7 +56,7 @@ const nodeTypes: NodeTypes = {
           <div className="text-xs bg-white px-2 py-1 rounded shadow-sm">Business Requirement</div>
           <div className="flex items-center space-x-1">
             <span className="text-lg">{data.status}</span>
-            <span className="text-xs text-gray-500">{data.featureCount}F</span>
+            <span className="text-xs text-gray-500">{data.frCount}FR</span>
           </div>
         </div>
         {data.capabilities && (
@@ -71,7 +71,7 @@ const nodeTypes: NodeTypes = {
       </div>
     )
   },
-  Feature: ({ data }: { data: any }) => {
+  FR: ({ data }: { data: any }) => {
     const getStatusColor = (status: string) => {
       switch (status) {
         case '✔️': return 'border-green-300 bg-gradient-to-br from-green-50 to-green-100'
@@ -86,7 +86,7 @@ const nodeTypes: NodeTypes = {
         <div className="font-semibold text-green-800 text-sm mb-1">{data.label}</div>
         <div className="text-xs text-green-600 line-clamp-2 mb-2">{data.description}</div>
         <div className="flex items-center justify-between">
-          <div className="text-xs bg-white px-2 py-1 rounded shadow-sm">Feature</div>
+          <div className="text-xs bg-white px-2 py-1 rounded shadow-sm">FR</div>
           <div className="flex items-center space-x-1">
             <span className="text-sm">{data.status}</span>
             {data.acCount && (
@@ -147,7 +147,7 @@ export default function Canvas() {
         const startX = 50
         const brY = 250
 
-        // Add BR nodes with status and features
+        // Add BR nodes with status and FRs
         brs.forEach((br, brIndex) => {
           const brX = startX + (brIndex * brSpacing)
           
@@ -164,7 +164,7 @@ export default function Canvas() {
               label: br.br_id, 
               description: br.title,
               status: brStatus,
-              featureCount: br.features?.length || 0,
+              frCount: br.features?.length || 0,
               capabilities: br.capabilities
             }
           })
@@ -179,33 +179,33 @@ export default function Canvas() {
             style: { stroke: '#8b5cf6', strokeWidth: 2 }
           })
 
-          // Add Feature nodes below each BR
+          // Add FR nodes below each BR
           br.features?.forEach((feature, featureIndex) => {
             const featureX = brX - 50 + (featureIndex * 120)
             const featureY = brY + 200 + (featureIndex * 30) // Stagger slightly
-            
-            // Determine feature status based on acceptance criteria and NFRs
+
+            // Determine FR status based on acceptance criteria and NFRs
             const hasAC = feature.acceptance_criteria && feature.acceptance_criteria.length > 0
             const hasNFRs = feature.nfrs && feature.nfrs.length > 0
             const hasRisks = feature.risks && feature.risks.length > 0
-            
-            const featureStatus = hasAC && hasNFRs && hasRisks ? '✔️' : 
+
+            const frStatus = hasAC && hasNFRs && hasRisks ? '✔️' :
                                 hasAC || hasNFRs ? '⚠️' : '❌'
 
             graphNodes.push({
               id: feature.feature_id,
-              type: 'Feature',
+              type: 'FR',
               position: { x: featureX, y: featureY },
-              data: { 
+              data: {
                 label: feature.title.length > 20 ? feature.title.substring(0, 20) + '...' : feature.title,
                 description: feature.description.length > 60 ? feature.description.substring(0, 60) + '...' : feature.description,
-                status: featureStatus,
+                status: frStatus,
                 acCount: feature.acceptance_criteria?.length || 0,
                 nfrs: feature.nfrs
               }
             })
 
-            // Connect BR to Feature
+            // Connect BR to FR
             graphEdges.push({
               id: `${br.br_id}-to-${feature.feature_id}`,
               source: br.br_id,
@@ -340,7 +340,7 @@ export default function Canvas() {
       <div className="flex-1 bg-gray-50 flex items-center justify-center">
         <div className="text-gray-500 text-center">
           <p className="text-lg">Select an SRT to view the dependency graph</p>
-          <p className="text-sm mt-2">The graph shows SRT → BR → Feature hierarchy with status indicators</p>
+          <p className="text-sm mt-2">The graph shows SRT → BR → FR hierarchy with status indicators</p>
         </div>
       </div>
     )
@@ -351,17 +351,17 @@ export default function Canvas() {
     return !checklistValues.includes('❌') && !checklistValues.includes('⚠️')
   }).length
 
-  const totalFeatures = brs.reduce((sum, br) => sum + (br.features?.length || 0), 0)
+  const totalFRs = brs.reduce((sum, br) => sum + (br.features?.length || 0), 0)
 
   return (
     <div className="flex-1 bg-gray-50 relative">
       <div className="absolute top-4 left-4 z-10 bg-white p-3 rounded-lg shadow-md border">
         <h3 className="text-sm font-medium text-gray-700 mb-1">Dependency Graph</h3>
-        <p className="text-xs text-gray-500 mb-2">SRT → BR → Feature → Application</p>
+        <p className="text-xs text-gray-500 mb-2">SRT → BR → FR → Application</p>
         <div className="space-y-1 text-xs">
           <div><span className="font-medium">SRT:</span> {currentSrtId}</div>
           <div><span className="font-medium">BRs:</span> {brs.length} ({completedBRs} complete)</div>
-          <div><span className="font-medium">Features:</span> {totalFeatures}</div>
+          <div><span className="font-medium">FRs:</span> {totalFRs}</div>
         </div>
       </div>
       

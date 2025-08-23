@@ -36,20 +36,20 @@ export function buildGraphPayload(srt: SRT): GraphPayload {
       label: 'contains'
     })
 
-    // Add Features for each BR in a vertical column below
+    // Add FRs for each BR in a vertical column below
     br.features.forEach((feature, featureIndex) => {
       const featureX = xPos
       const featureY = yPos + 150 + (featureIndex * 120)
-      
+
       nodes.push({
         id: feature.feature_id,
-        type: 'Feature',
+        type: 'FR',
         label: feature.title,
         description: feature.description.substring(0, 80) + '...',
         position: { x: featureX, y: featureY }
       })
 
-      // Connect BR to Feature
+      // Connect BR to FR
       edges.push({
         id: `${br.br_id}-to-${feature.feature_id}`,
         source: br.br_id,

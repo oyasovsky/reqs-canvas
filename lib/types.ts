@@ -50,7 +50,7 @@ export interface SRT {
 
 export interface GraphNode {
   id: string;
-  type: "SRT" | "BR" | "Application" | "Epic" | "Feature";
+  type: "SRT" | "BR" | "Application" | "Epic" | "FR";
   label: string;
   description?: string;
   position: { x: number; y: number };
