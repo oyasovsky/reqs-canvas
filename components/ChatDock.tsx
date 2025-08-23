@@ -16,7 +16,7 @@ const INTENTS = [
 export default function ChatDock() {
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<Array<{ text: string; response: string; timestamp: Date }>>([])
-  const { currentSrtId, brs, selectedBrId, setBrs, addChat } = useAppStore()
+  const { currentSrtId, brs, selectedBrId, setBrs } = useAppStore()
 
   const selectedBR = brs.find(br => br.br_id === selectedBrId)
   const selectedSRT = currentSrtId ? { srt_id: currentSrtId } : null
@@ -194,7 +194,7 @@ export default function ChatDock() {
           <button
             key={intent}
             className="px-3 py-2 bg-gradient-to-r from-blue-100/80 to-indigo-100/80 text-blue-700 rounded-lg hover:from-blue-200/80 hover:to-indigo-200/80 transition-all duration-200 text-xs font-medium whitespace-nowrap border border-blue-200/50 backdrop-blur-sm"
-            onClick={() => handleIntent(intent)}
+            onClick={() => setInput(intent)}
           >
             {intent}
           </button>

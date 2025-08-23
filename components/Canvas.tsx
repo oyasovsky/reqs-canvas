@@ -151,7 +151,7 @@ export default function Canvas() {
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
 
-  const buildHierarchyGraph = () => {
+  const buildHierarchyGraph = useCallback(() => {
     const graphNodes: Node[] = []
     const graphEdges: Edge[] = []
     
@@ -251,7 +251,7 @@ export default function Canvas() {
     })
     
     return { graphNodes, graphEdges }
-  }
+  }, [brs, selectedBrId])
 
   const buildBRSubgraph = (br: any) => {
     const graphNodes: Node[] = []
@@ -318,7 +318,7 @@ export default function Canvas() {
     return { graphNodes, graphEdges }
   }
 
-  const buildDependenciesGraph = () => {
+  const buildDependenciesGraph = useCallback(() => {
     const graphNodes: Node[] = []
     const graphEdges: Edge[] = []
     
@@ -405,7 +405,7 @@ export default function Canvas() {
     })
     
     return { graphNodes, graphEdges }
-  }
+  }, [brs, selectedBrId])
 
   useEffect(() => {
     if (currentSrtId && brs.length > 0) {

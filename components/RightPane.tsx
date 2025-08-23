@@ -5,6 +5,93 @@ import type { BR } from "@/lib/types";
 import { computeChecklist, computeMissingInfo } from "@/lib/checklist";
 import { ConfirmModal } from "@/components/ConfirmModal";
 
+interface EditableAppsListProps {
+  apps: any[];
+  onUpdate: (apps: any[]) => void;
+}
+
+const EditableAppsList = ({ apps, onUpdate }: EditableAppsListProps) => {
+  const [newAppName, setNewAppName] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
+
+  const handleAddApp = () => {
+    if (newAppName.trim()) {
+      const newApp = {
+        app: newAppName.trim(),
+        reason: "Manual addition",
+        confidence: "high"
+      };
+      onUpdate([...apps, newApp]);
+      setNewAppName("");
+      setIsAdding(false);
+    }
+  };
+
+  const handleRemoveApp = (index: number) => {
+    const updatedApps = apps.filter((_, i) => i !== index);
+    onUpdate(updatedApps);
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap gap-2">
+        {apps.map((app, idx) => (
+          <div key={idx} className="flex items-center gap-1 bg-blue-100/80 text-blue-700 px-3 py-1 rounded-lg text-sm font-medium border border-blue-200/50">
+            <span>{app.app}</span>
+            <button
+              onClick={() => handleRemoveApp(idx)}
+              className="ml-1 text-blue-600 hover:text-red-600 transition-colors duration-200"
+              title="Remove app"
+            >
+              ×
+            </button>
+          </div>
+        ))}
+        {apps.length === 0 && (
+          <div className="text-slate-500 text-sm py-2">No applications affected</div>
+        )}
+      </div>
+      
+      {isAdding ? (
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={newAppName}
+            onChange={(e) => setNewAppName(e.target.value)}
+            placeholder="Application name"
+            className="input flex-1 text-sm"
+            onKeyDown={(e) => e.key === 'Enter' && handleAddApp()}
+            autoFocus
+          />
+          <button
+            onClick={handleAddApp}
+            className="btn btn-primary text-xs px-3"
+            disabled={!newAppName.trim()}
+          >
+            Add
+          </button>
+          <button
+            onClick={() => {
+              setIsAdding(false);
+              setNewAppName("");
+            }}
+            className="btn btn-outline text-xs px-3"
+          >
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={() => setIsAdding(true)}
+          className="btn btn-outline text-xs px-3 py-1"
+        >
+          + Add App
+        </button>
+      )}
+    </div>
+  );
+};
+
 export default function RightPane() {
   const { brs, selectedBrId, setBrs, setCreatedItems, currentSrtId } = useAppStore();
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -110,7 +197,6 @@ export default function RightPane() {
           </div>
         </div>
         <div className="flex gap-2 mb-4">
-          <button className="btn btn-outline text-xs" onClick={suggestApps}>Suggest Apps</button>
           <button className="btn btn-outline text-xs" onClick={suggestDeps}>Suggest Deps</button>
         </div>
         <p className="text-sm text-slate-600 leading-relaxed">{br.description}</p>
@@ -170,13 +256,25 @@ export default function RightPane() {
       </div>
 
       <div className="mb-6">
-        <div className="flex items-center space-x-2 mb-3">
-          <div className="w-1.5 h-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
-          <h4 className="text-sm font-semibold text-slate-700">Impacted Applications</h4>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center space-x-2">
+            <div className="w-1.5 h-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+            <h4 className="text-sm font-semibold text-slate-700">Affected Applications</h4>
+          </div>
+          <div className="flex gap-1">
+            <button 
+              className="btn btn-outline text-xs px-2 py-1"
+              onClick={suggestApps}
+              title="Restore suggested apps"
+            >
+              Restore
+            </button>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {(br.impacted_applications || []).map((a, idx) => (<span key={idx} className="badge">{a.app}</span>))}
-        </div>
+        <EditableAppsList 
+          apps={br.impacted_applications || []}
+          onUpdate={(apps) => updateBr(b => ({ ...b, impacted_applications: apps }))}
+        />
       </div>
 
       <div className="mb-6">
