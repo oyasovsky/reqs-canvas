@@ -1,0 +1,12 @@
+{
+    "apps": [
+      { "app": "BillingSvc", "domain": "Billing", "owner": "Billing Team" },
+      { "app": "AccountSvc", "domain": "Accounts", "owner": "Accounts Team" },
+      { "app": "NotificationSvc", "domain": "Comms", "owner": "Messaging Team" },
+      { "app": "CRM", "domain": "Customer", "owner": "CRM Team" },
+      { "app": "ProvisioningSvc", "domain": "Network", "owner": "Provisioning Team" },
+      { "app": "InventorySvc", "domain": "Supply", "owner": "Inventory Team" },
+      { "app": "PaymentsSvc", "domain": "Finance", "owner": "Payments Team" }
+    ]
+  }
+  

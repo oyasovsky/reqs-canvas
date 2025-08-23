@@ -1,0 +1,542 @@
+{
+  "srts": [
+    {
+      "srt_id": "SRT-001",
+      "title": "Family Account Changes",
+      "scope": "Customer support flows for account & line changes.",
+      "history": "Initial requirements gathering completed",
+      "business_requirements": [
+        {
+          "br_id": "BR01",
+          "title": "Remove phone line from family account",
+          "description": "Customer requests line removal; may require prorated charges.",
+          "capabilities": ["Account Management", "Billing Operations"],
+          "features": [
+            {
+              "feature_id": "F001",
+              "title": "Line Removal Workflow",
+              "description": "Remove phone line from family account with prorated billing",
+              "acceptance_criteria": ["User can select line to remove", "System calculates prorated charges", "Line is deactivated immediately"],
+              "nfrs": [
+                { "category": "Performance", "target": "Response time < 2 seconds", "notes": "Critical for customer experience" },
+                { "category": "Security", "target": "Owner verification required", "notes": "Prevent unauthorized changes" }
+              ],
+              "risks": ["Proration calculation errors", "Service interruption during removal"],
+              "assumptions": ["User has proper authorization", "Billing system can handle proration"],
+              "constraints": ["Must complete within billing cycle", "Requires account owner approval"],
+              "provenance": [
+                { "source": "Customer Support", "snippet": "Frequent request for family plan optimization" }
+              ]
+            }
+          ],
+          "impacted_applications": [
+            { "app": "BillingSvc", "reason": "Calculate prorated charges", "confidence": 0.9, "provenance": [{ "source": "Billing PO", "snippet": "Cancel line triggers prorated refund in BillingSvc" }] },
+            { "app": "AccountSvc", "reason": "Update account structure", "confidence": 0.9, "provenance": [{ "source": "Billing PO", "snippet": "AccountSvc updates ownership" }] }
+          ],
+          "app_dependencies": [
+            { "from": "AccountSvc", "to": "BillingSvc", "type": "API", "confidence": 0.8, "provenance": [{ "source": "Architecture", "snippet": "Account changes trigger billing updates" }] }
+          ],
+          "owners": [
+            { "role": "TPM", "name": "Account Team Lead" },
+            { "role": "SA", "name": "Billing Architect" }
+          ],
+          "checklist": {
+            "title": "✔️",
+            "description": "✔️",
+            "capability_map": "✔️",
+            "impacted_apps": "✔️",
+            "typed_dependencies": "✔️",
+            "acceptance_criteria": "✔️",
+            "nfrs": "✔️",
+            "risks_assumptions_constraints": "✔️",
+            "owners": "✔️"
+          },
+          "missing_info": []
+        },
+        {
+          "br_id": "BR02",
+          "title": "Add new line to existing family account",
+          "description": "Provision SIM; activate plan; notify owner.",
+          "capabilities": ["Line Provisioning", "Plan Activation"],
+          "features": [
+            {
+              "feature_id": "F002",
+              "title": "Line Addition Workflow",
+              "description": "Add new phone line to existing family account",
+              "acceptance_criteria": ["User can select plan for new line", "SIM is provisioned", "Plan is activated", "Owner is notified"],
+              "nfrs": [
+                { "category": "Availability", "target": "99.9% uptime", "notes": "Critical for customer onboarding" },
+                { "category": "Performance", "target": "Activation < 5 minutes", "notes": "Industry standard" }
+              ],
+              "risks": ["SIM inventory shortage", "Plan activation failures"],
+              "assumptions": ["SIM inventory available", "Plan exists in system"],
+              "constraints": ["Requires account owner approval", "Subject to credit check"],
+              "provenance": [
+                { "source": "Operations", "snippet": "ProvisioningSvc needs InventorySvc check before activation" }
+              ]
+            }
+          ],
+          "impacted_applications": [
+            { "app": "ProvisioningSvc", "reason": "SIM provisioning and activation", "confidence": 0.9, "provenance": [{ "source": "Operations", "snippet": "ProvisioningSvc needs InventorySvc check before activation" }] },
+            { "app": "AccountSvc", "reason": "Update account structure", "confidence": 0.9, "provenance": [{ "source": "Architecture", "snippet": "Account changes require account service updates" }] },
+            { "app": "NotificationSvc", "reason": "Notify account owner", "confidence": 0.8, "provenance": [{ "source": "Requirements", "snippet": "Owner must be notified of new line addition" }] }
+          ],
+          "app_dependencies": [
+            { "from": "ProvisioningSvc", "to": "InventorySvc", "type": "API", "confidence": 0.9, "provenance": [{ "source": "Operations", "snippet": "ProvisioningSvc needs InventorySvc check before activation" }] }
+          ],
+          "owners": [
+            { "role": "TPM", "name": "Provisioning Team Lead" },
+            { "role": "SA", "name": "Infrastructure Architect" }
+          ],
+          "checklist": {
+            "title": "✔️",
+            "description": "✔️",
+            "capability_map": "✔️",
+            "impacted_apps": "✔️",
+            "typed_dependencies": "✔️",
+            "acceptance_criteria": "✔️",
+            "nfrs": "⚠️",
+            "risks_assumptions_constraints": "✔️",
+            "owners": "✔️"
+          },
+          "missing_info": [
+            { "item": "NFRs", "prompt": "Complete NFR definitions for performance and security" }
+          ]
+        },
+        {
+          "br_id": "BR03",
+          "title": "Suspend a line temporarily",
+          "description": "Non-payment or vacation hold; resume later.",
+          "capabilities": ["Account Management", "Line Control"],
+          "features": [
+            {
+              "feature_id": "F003",
+              "title": "Line Suspension Service",
+              "description": "Temporarily suspend service for non-payment or customer request",
+              "acceptance_criteria": ["User can select line to suspend", "Suspension reason is recorded", "Resume date can be set", "Customer is notified"],
+              "nfrs": [
+                { "category": "Performance", "target": "Suspension completes < 30 seconds", "notes": "Quick action for non-payment" }
+              ],
+              "risks": ["Accidental permanent suspension", "Failed resume process"],
+              "assumptions": ["Billing system tracks suspension reason", "Resume process is automated"],
+              "constraints": ["Maximum suspension period of 90 days", "Requires proper authorization"],
+              "provenance": [
+                { "source": "Customer Support", "snippet": "Common request for vacation holds and payment issues" }
+              ]
+            }
+          ],
+          "impacted_applications": [
+            { "app": "BillingSvc", "reason": "Track suspension for billing", "confidence": 0.8, "provenance": [{ "source": "Billing", "snippet": "Suspension affects billing calculations" }] },
+            { "app": "AccountSvc", "reason": "Update line status", "confidence": 0.9, "provenance": [{ "source": "Architecture", "snippet": "Account service manages line status" }] }
+          ],
+          "app_dependencies": [
+            { "from": "AccountSvc", "to": "BillingSvc", "type": "Event", "confidence": 0.8, "provenance": [{ "source": "Architecture", "snippet": "Line status changes trigger billing events" }] }
+          ],
+          "owners": [
+            { "role": "TPM", "name": "Account Team Lead" },
+            { "role": "SA", "name": "Service Architect" }
+          ],
+          "checklist": {
+            "title": "✔️",
+            "description": "✔️",
+            "capability_map": "⚠️",
+            "impacted_apps": "✔️",
+            "typed_dependencies": "✔️",
+            "acceptance_criteria": "⚠️",
+            "nfrs": "❌",
+            "risks_assumptions_constraints": "⚠️",
+            "owners": "✔️"
+          },
+          "missing_info": [
+            { "item": "Capability Mapping", "prompt": "Define specific suspension capabilities" },
+            { "item": "Acceptance Criteria", "prompt": "Add more detailed criteria for edge cases" },
+            { "item": "NFRs", "prompt": "Define comprehensive non-functional requirements" },
+            { "item": "Risks/Assumptions", "prompt": "Complete risk analysis for suspension scenarios" }
+          ]
+        },
+        {
+          "br_id": "BR04",
+          "title": "Change account owner",
+          "description": "KYC, credit check; transfer responsibilities.",
+          "capabilities": ["Account Management", "Identity Verification"],
+          "features": [
+            {
+              "feature_id": "F004",
+              "title": "Account Ownership Transfer",
+              "description": "Transfer account ownership with proper verification and credit checks",
+              "acceptance_criteria": ["New owner identity verified", "Credit check completed", "All lines transferred", "Billing responsibility transferred"],
+              "nfrs": [
+                { "category": "Security", "target": "Multi-factor authentication required", "notes": "High security for ownership changes" },
+                { "category": "Compliance", "target": "KYC requirements met", "notes": "Regulatory compliance" }
+              ],
+              "risks": ["Failed credit check", "Identity fraud", "Incomplete transfer"],
+              "assumptions": ["KYC system is available", "Credit bureau integration works", "Legal transfer is valid"],
+              "constraints": ["Both parties must consent", "Outstanding balances must be resolved", "Minimum account age requirements"],
+              "provenance": [
+                { "source": "Legal", "snippet": "Account ownership transfers require full KYC and credit verification" }
+              ]
+            }
+          ],
+          "impacted_applications": [
+            { "app": "AccountSvc", "reason": "Update ownership records", "confidence": 0.9, "provenance": [{ "source": "Architecture", "snippet": "Account service manages ownership data" }] },
+            { "app": "CRM", "reason": "Customer relationship transfer", "confidence": 0.9, "provenance": [{ "source": "Business", "snippet": "CRM must track ownership changes" }] },
+            { "app": "BillingSvc", "reason": "Transfer billing responsibility", "confidence": 0.8, "provenance": [{ "source": "Billing", "snippet": "Billing ownership must be transferred" }] }
+          ],
+          "app_dependencies": [
+            { "from": "AccountSvc", "to": "CRM", "type": "API", "confidence": 0.8, "provenance": [{ "source": "Architecture", "snippet": "Account changes sync to CRM" }] },
+            { "from": "CRM", "to": "BillingSvc", "type": "Event", "confidence": 0.7, "provenance": [{ "source": "Business", "snippet": "Ownership changes trigger billing updates" }] }
+          ],
+          "owners": [
+            { "role": "TPM", "name": "Account Team Lead" },
+            { "role": "SA", "name": "Security Architect" },
+            { "role": "PO", "name": "Compliance Officer" }
+          ],
+          "checklist": {
+            "title": "✔️",
+            "description": "✔️",
+            "capability_map": "✔️",
+            "impacted_apps": "✔️",
+            "typed_dependencies": "✔️",
+            "acceptance_criteria": "✔️",
+            "nfrs": "✔️",
+            "risks_assumptions_constraints": "✔️",
+            "owners": "✔️"
+          },
+          "missing_info": []
+        },
+        {
+          "br_id": "BR05",
+          "title": "Update billing address",
+          "description": "Affects tax region; downstream bill calc.",
+          "capabilities": ["Billing Management", "Address Validation"],
+          "features": [
+            {
+              "feature_id": "F005",
+              "title": "Billing Address Update Service",
+              "description": "Update customer billing address with tax implications",
+              "acceptance_criteria": ["Address validated", "Tax region updated", "Future bills reflect new address", "Customer notified"],
+              "nfrs": [
+                { "category": "Performance", "target": "Address validation < 3 seconds", "notes": "Real-time validation" },
+                { "category": "Accuracy", "target": "99.9% address validation accuracy", "notes": "Critical for tax calculations" }
+              ],
+              "risks": ["Invalid address entry", "Tax calculation errors", "Delayed updates"],
+              "assumptions": ["Address validation service available", "Tax service integration works", "Customer provides valid address"],
+              "constraints": ["Must validate before saving", "Tax changes effective next billing cycle", "Some addresses may be restricted"],
+              "provenance": [
+                { "source": "Billing Team", "snippet": "Address changes significantly impact tax calculations and compliance" }
+              ]
+            }
+          ],
+          "impacted_applications": [
+            { "app": "AccountSvc", "reason": "Store billing address", "confidence": 0.9, "provenance": [{ "source": "Architecture", "snippet": "Account service manages customer addresses" }] },
+            { "app": "BillingSvc", "reason": "Tax calculation updates", "confidence": 0.9, "provenance": [{ "source": "Billing", "snippet": "Address changes affect tax calculations" }] },
+            { "app": "NotificationSvc", "reason": "Notify customer of changes", "confidence": 0.7, "provenance": [{ "source": "Requirements", "snippet": "Customer must be notified of address changes" }] }
+          ],
+          "app_dependencies": [
+            { "from": "AccountSvc", "to": "BillingSvc", "type": "Event", "confidence": 0.9, "provenance": [{ "source": "Architecture", "snippet": "Address changes trigger billing recalculation" }] },
+            { "from": "BillingSvc", "to": "NotificationSvc", "type": "API", "confidence": 0.6, "provenance": [{ "source": "Business", "snippet": "Billing changes may trigger notifications" }] }
+          ],
+          "owners": [
+            { "role": "TPM", "name": "Billing Team Lead" },
+            { "role": "SA", "name": "Data Architect" }
+          ],
+          "checklist": {
+            "title": "✔️",
+            "description": "✔️",
+            "capability_map": "✔️",
+            "impacted_apps": "✔️",
+            "typed_dependencies": "✔️",
+            "acceptance_criteria": "⚠️",
+            "nfrs": "⚠️",
+            "risks_assumptions_constraints": "⚠️",
+            "owners": "✔️"
+          },
+          "missing_info": [
+            { "item": "Acceptance Criteria", "prompt": "Add edge case handling for address validation" },
+            { "item": "NFRs", "prompt": "Define additional performance and security requirements" },
+            { "item": "Risks/Assumptions", "prompt": "Analyze tax compliance and validation risks" }
+          ]
+        },
+        {
+          "br_id": "BR06",
+          "title": "Enable paperless billing",
+          "description": "Email-based statements; opt-in/out.",
+          "capabilities": ["Billing Management", "Communication Preferences"],
+          "features": [
+            {
+              "feature_id": "F006",
+              "title": "Paperless Billing Toggle",
+              "description": "Allow customers to enable/disable paperless billing with email delivery",
+              "acceptance_criteria": ["Customer can opt-in to paperless", "Email delivery configured", "Paper bills stopped", "Customer can opt-out anytime"],
+              "nfrs": [
+                { "category": "Availability", "target": "Email delivery 99.5% success rate", "notes": "Critical for bill delivery" },
+                { "category": "Performance", "target": "Preference change effective immediately", "notes": "Real-time updates" }
+              ],
+              "risks": ["Email delivery failures", "Customer missing bills", "Preference conflicts"],
+              "assumptions": ["Customer has valid email", "Email service reliable", "Customer checks email regularly"],
+              "constraints": ["Email must be verified", "Option to revert to paper", "Compliance with billing regulations"],
+              "provenance": [
+                { "source": "Customer Service", "snippet": "Popular request for environmental and convenience reasons" }
+              ]
+            }
+          ],
+          "impacted_applications": [
+            { "app": "BillingSvc", "reason": "Control billing delivery method", "confidence": 0.9, "provenance": [{ "source": "Billing", "snippet": "Billing service manages delivery preferences" }] },
+            { "app": "NotificationSvc", "reason": "Email bill delivery", "confidence": 0.9, "provenance": [{ "source": "Architecture", "snippet": "Notification service handles email delivery" }] },
+            { "app": "AccountSvc", "reason": "Store customer preferences", "confidence": 0.8, "provenance": [{ "source": "Architecture", "snippet": "Account service stores preferences" }] }
+          ],
+          "app_dependencies": [
+            { "from": "BillingSvc", "to": "NotificationSvc", "type": "API", "confidence": 0.9, "provenance": [{ "source": "Architecture", "snippet": "Billing triggers email notifications" }] },
+            { "from": "AccountSvc", "to": "BillingSvc", "type": "Event", "confidence": 0.7, "provenance": [{ "source": "Architecture", "snippet": "Preference changes update billing behavior" }] }
+          ],
+          "owners": [
+            { "role": "TPM", "name": "Billing Team Lead" },
+            { "role": "SA", "name": "Integration Architect" }
+          ],
+          "checklist": {
+            "title": "✔️",
+            "description": "✔️",
+            "capability_map": "⚠️",
+            "impacted_apps": "✔️",
+            "typed_dependencies": "✔️",
+            "acceptance_criteria": "⚠️",
+            "nfrs": "⚠️",
+            "risks_assumptions_constraints": "⚠️",
+            "owners": "✔️"
+          },
+          "missing_info": [
+            { "item": "Capability Mapping", "prompt": "Define specific paperless billing capabilities" },
+            { "item": "Acceptance Criteria", "prompt": "Add detailed criteria for email verification and fallback" },
+            { "item": "NFRs", "prompt": "Define security and compliance requirements" },
+            { "item": "Risks/Assumptions", "prompt": "Analyze email delivery and regulatory risks" }
+          ]
+        },
+        {
+          "br_id": "BR07",
+          "title": "Request itemized bill for last 6 months",
+          "description": "Data retrieval; large export.",
+          "capabilities": ["Billing History", "Data Export"],
+          "features": [
+            {
+              "feature_id": "F007",
+              "title": "Historical Bill Export Service",
+              "description": "Generate and deliver detailed billing history for specified time periods",
+              "acceptance_criteria": ["Customer can select date range", "Detailed itemization included", "Export delivered via email", "Data includes all charges and credits"],
+              "nfrs": [
+                { "category": "Performance", "target": "Export generation < 5 minutes", "notes": "Large data processing" },
+                { "category": "Security", "target": "Encrypted export delivery", "notes": "Sensitive financial data" },
+                { "category": "Scalability", "target": "Handle concurrent export requests", "notes": "Popular feature during tax season" }
+              ],
+              "risks": ["Large data processing delays", "Export format compatibility", "Security breaches"],
+              "assumptions": ["Historical data available", "Export system scalable", "Customer has secure email"],
+              "constraints": ["Maximum 24 month history", "One export per customer per day", "Data retention policies apply"],
+              "provenance": [
+                { "source": "Customer Support", "snippet": "Frequent requests for detailed billing history for tax and expense reporting" }
+              ]
+            }
+          ],
+          "impacted_applications": [
+            { "app": "BillingSvc", "reason": "Access historical billing data", "confidence": 0.9, "provenance": [{ "source": "Billing", "snippet": "Billing service stores all historical data" }] },
+            { "app": "NotificationSvc", "reason": "Deliver export via email", "confidence": 0.8, "provenance": [{ "source": "Architecture", "snippet": "Email delivery for large exports" }] }
+          ],
+          "app_dependencies": [
+            { "from": "BillingSvc", "to": "NotificationSvc", "type": "File", "confidence": 0.8, "provenance": [{ "source": "Architecture", "snippet": "Large file exports sent via secure email" }] }
+          ],
+          "owners": [
+            { "role": "TPM", "name": "Billing Team Lead" },
+            { "role": "SA", "name": "Data Architect" }
+          ],
+          "checklist": {
+            "title": "✔️",
+            "description": "✔️",
+            "capability_map": "⚠️",
+            "impacted_apps": "✔️",
+            "typed_dependencies": "✔️",
+            "acceptance_criteria": "❌",
+            "nfrs": "❌",
+            "risks_assumptions_constraints": "❌",
+            "owners": "✔️"
+          },
+          "missing_info": [
+            { "item": "Capability Mapping", "prompt": "Define data export and security capabilities" },
+            { "item": "Acceptance Criteria", "prompt": "Detail export format and delivery requirements" },
+            { "item": "NFRs", "prompt": "Define performance, security, and scalability requirements" },
+            { "item": "Risks/Assumptions", "prompt": "Analyze data privacy and performance risks" }
+          ]
+        },
+        {
+          "br_id": "BR08",
+          "title": "Reinstate canceled line",
+          "description": "Reactivation; plan selection; inventory check.",
+          "capabilities": ["Line Management", "Service Activation"],
+          "features": [
+            {
+              "feature_id": "F008",
+              "title": "Line Reinstatement Service",
+              "description": "Reactivate previously canceled phone lines with plan selection and inventory validation",
+              "acceptance_criteria": ["Verify line eligibility for reinstatement", "Plan selection available", "Inventory check completed", "Service activated successfully"],
+              "nfrs": [
+                { "category": "Performance", "target": "Reinstatement process < 10 minutes", "notes": "Customer waiting for service" },
+                { "category": "Availability", "target": "Service available 24/7", "notes": "Customer convenience" }
+              ],
+              "risks": ["Inventory unavailable", "Plan compatibility issues", "Failed activation"],
+              "assumptions": ["Line can be reinstated", "Inventory system accurate", "Plans still available"],
+              "constraints": ["Maximum 90 days since cancellation", "Account in good standing", "Valid payment method required"],
+              "provenance": [
+                { "source": "Customer Support", "snippet": "Common request when customers change their mind about cancellation" }
+              ]
+            }
+          ],
+          "impacted_applications": [
+            { "app": "ProvisioningSvc", "reason": "Reactivate line and provision service", "confidence": 0.9, "provenance": [{ "source": "Operations", "snippet": "Provisioning service handles reactivation" }] },
+            { "app": "InventorySvc", "reason": "Check equipment and number availability", "confidence": 0.9, "provenance": [{ "source": "Operations", "snippet": "Inventory check required before reactivation" }] },
+            { "app": "AccountSvc", "reason": "Update line status and plan", "confidence": 0.9, "provenance": [{ "source": "Architecture", "snippet": "Account service manages line status" }] }
+          ],
+          "app_dependencies": [
+            { "from": "ProvisioningSvc", "to": "InventorySvc", "type": "API", "confidence": 0.9, "provenance": [{ "source": "Operations", "snippet": "Provisioning checks inventory before activation" }] },
+            { "from": "AccountSvc", "to": "ProvisioningSvc", "type": "Event", "confidence": 0.8, "provenance": [{ "source": "Architecture", "snippet": "Account updates trigger provisioning workflows" }] }
+          ],
+          "owners": [
+            { "role": "TPM", "name": "Provisioning Team Lead" },
+            { "role": "SA", "name": "Service Architect" }
+          ],
+          "checklist": {
+            "title": "✔️",
+            "description": "✔️",
+            "capability_map": "✔️",
+            "impacted_apps": "✔️",
+            "typed_dependencies": "✔️",
+            "acceptance_criteria": "⚠️",
+            "nfrs": "❌",
+            "risks_assumptions_constraints": "⚠️",
+            "owners": "✔️"
+          },
+          "missing_info": [
+            { "item": "Acceptance Criteria", "prompt": "Add detailed criteria for eligibility and error handling" },
+            { "item": "NFRs", "prompt": "Define comprehensive performance and reliability requirements" },
+            { "item": "Risks/Assumptions", "prompt": "Complete risk analysis for reinstatement scenarios" }
+          ]
+        }
+      ]
+    },
+    {
+      "srt_id": "SRT-002",
+      "title": "Plan Management Enhancements",
+      "scope": "Changes to plans, upgrades, and discounts.",
+      "history": "Requirements analysis in progress",
+      "business_requirements": [
+        {
+          "br_id": "BR01",
+          "title": "Upgrade plan mid-cycle",
+          "description": "Proration rules; immediate data cap update.",
+          "capabilities": ["Plan Management", "Billing Operations"],
+          "features": [
+            {
+              "feature_id": "F003",
+              "title": "Mid-Cycle Plan Upgrade",
+              "description": "Allow customers to upgrade their plan mid-billing cycle",
+              "acceptance_criteria": ["User can select new plan", "Proration is calculated", "Data cap is updated immediately"],
+              "nfrs": [
+                { "category": "Performance", "target": "Upgrade completes < 1 minute", "notes": "Real-time service impact" }
+              ],
+              "risks": ["Proration calculation errors", "Service interruption"],
+              "assumptions": ["Billing system supports proration", "Plan changes are immediate"],
+              "constraints": ["Only upgrades allowed mid-cycle", "Requires payment method verification"],
+              "provenance": [
+                { "source": "Pricing PM", "snippet": "Proration handled by BillingSvc; CRM owns eligibility checks" }
+              ]
+            }
+          ],
+          "impacted_applications": [
+            { "app": "BillingSvc", "reason": "Handle proration calculations", "confidence": 0.9, "provenance": [{ "source": "Pricing PM", "snippet": "Proration handled by BillingSvc" }] },
+            { "app": "AccountSvc", "reason": "Update plan details", "confidence": 0.8, "provenance": [{ "source": "Architecture", "snippet": "Account service manages plan information" }] }
+          ],
+          "app_dependencies": [
+            { "from": "AccountSvc", "to": "BillingSvc", "type": "API", "confidence": 0.8, "provenance": [{ "source": "Architecture", "snippet": "Plan changes trigger billing updates" }] }
+          ],
+          "owners": [
+            { "role": "PO", "name": "Pricing Product Owner" },
+            { "role": "SA", "name": "Billing Architect" }
+          ],
+          "checklist": {
+            "title": "✔️",
+            "description": "✔️",
+            "capability_map": "⚠️",
+            "impacted_apps": "✔️",
+            "typed_dependencies": "✔️",
+            "acceptance_criteria": "⚠️",
+            "nfrs": "❌",
+            "risks_assumptions_constraints": "⚠️",
+            "owners": "✔️"
+          },
+          "missing_info": [
+            { "item": "Capability Mapping", "prompt": "Define specific capabilities for plan management" },
+            { "item": "Acceptance Criteria", "prompt": "Add more detailed acceptance criteria" },
+            { "item": "NFRs", "prompt": "Define non-functional requirements" },
+            { "item": "Risks/Assumptions", "prompt": "Complete risk assessment and assumptions" }
+          ]
+        }
+      ]
+    },
+    {
+      "srt_id": "SRT-003",
+      "title": "Profile & Notifications",
+      "scope": "Customer profile and comms preferences.",
+      "history": "Requirements gathering phase",
+      "business_requirements": [
+        {
+          "br_id": "BR01",
+          "title": "Change email and phone",
+          "description": "Verification via OTP; audit log.",
+          "capabilities": ["Profile Management", "Security"],
+          "features": [
+            {
+              "feature_id": "F004",
+              "title": "Contact Information Update",
+              "description": "Allow customers to update email and phone with verification",
+              "acceptance_criteria": ["User can update contact info", "OTP verification is sent", "Changes are logged"],
+              "nfrs": [
+                { "category": "Security", "target": "OTP verification required", "notes": "Prevent unauthorized changes" }
+              ],
+              "risks": ["OTP delivery failures", "Unauthorized access"],
+              "assumptions": ["OTP service is reliable", "User has access to contact methods"],
+              "constraints": ["Verification required for all changes", "Audit trail must be maintained"],
+              "provenance": [
+                { "source": "Privacy Lead", "snippet": "Data export must complete within 30 days SLA" }
+              ]
+            }
+          ],
+          "impacted_applications": [
+            { "app": "AccountSvc", "reason": "Update profile information", "confidence": 0.9, "provenance": [{ "source": "Architecture", "snippet": "Account service owns customer profiles" }] },
+            { "app": "NotificationSvc", "reason": "Send OTP verification", "confidence": 0.8, "provenance": [{ "source": "Requirements", "snippet": "OTP verification required for security" }] }
+          ],
+          "app_dependencies": [
+            { "from": "AccountSvc", "to": "NotificationSvc", "type": "API", "confidence": 0.8, "provenance": [{ "source": "Architecture", "snippet": "Profile changes trigger notifications" }] }
+          ],
+          "owners": [
+            { "role": "TPM", "name": "Profile Team Lead" },
+            { "role": "SA", "name": "Security Architect" }
+          ],
+          "checklist": {
+            "title": "✔️",
+            "description": "✔️",
+            "capability_map": "⚠️",
+            "impacted_apps": "✔️",
+            "typed_dependencies": "✔️",
+            "acceptance_criteria": "⚠️",
+            "nfrs": "⚠️",
+            "risks_assumptions_constraints": "⚠️",
+            "owners": "✔️"
+          },
+          "missing_info": [
+            { "item": "Capability Mapping", "prompt": "Define specific capabilities for profile management" },
+            { "item": "Acceptance Criteria", "prompt": "Add more detailed acceptance criteria" },
+            { "item": "NFRs", "prompt": "Complete non-functional requirements" },
+            { "item": "Risks/Assumptions", "prompt": "Complete risk assessment and assumptions" }
+          ]
+        }
+      ]
+    }
+  ]
+}
+  
