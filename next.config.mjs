@@ -5,6 +5,8 @@ const nextConfig = {
     },
     output: 'export',
     trailingSlash: true,
+    basePath: '/reqs-canvas',
+    assetPrefix: '/reqs-canvas',
     images: {
       unoptimized: true,
     },
