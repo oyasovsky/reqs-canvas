@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import srts from "@/data/srts.json";
 import { useAppStore } from "@/lib/store";
 import type { BR } from "@/lib/types";
+import { mockFetch } from "@/lib/mockData";
 
 export default function Sidebar() {
   const { setSrt, brs, selectBr, selectedBrId } = useAppStore();
@@ -12,7 +13,7 @@ export default function Sidebar() {
     if (srtId) {
       async function load() {
         try {
-          const res = await fetch("/api/parse", { method: "POST", body: JSON.stringify({ srtId }) });
+          const res = await mockFetch("/api/parse", { method: "POST", body: JSON.stringify({ srtId }) });
           if (res.ok) {
             const data = await res.json();
             setSrt(srtId, data.brs as BR[]);

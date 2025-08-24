@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useAppStore } from '@/lib/store'
+import { mockFetch } from '@/lib/mockData'
 
 const INTENTS = [
   "what's left for BR01?",
@@ -112,7 +113,7 @@ export default function ChatDock() {
         const brId = intent.match(/BR(\d+)/)?.[1]
         if (brId && selectedSRT) {
           try {
-            const apiResponse = await fetch('/api/suggest-apps', {
+            const apiResponse = await mockFetch('/api/suggest-apps', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ brId: `BR${brId}`, srtId: selectedSRT.srt_id }),
@@ -133,7 +134,7 @@ export default function ChatDock() {
       } else if (intent.includes('propose dependencies')) {
         if (selectedSRT) {
           try {
-            const apiResponse = await fetch('/api/suggest-deps', {
+            const apiResponse = await mockFetch('/api/suggest-deps', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ srtId: selectedSRT.srt_id }),
@@ -149,7 +150,7 @@ export default function ChatDock() {
         const brId = intent.match(/BR(\d+)/)?.[1]
         if (brId && selectedSRT) {
           try {
-            const apiResponse = await fetch('/api/draft-ac', {
+            const apiResponse = await mockFetch('/api/draft-ac', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ brId: `BR${brId}`, srtId: selectedSRT.srt_id }),

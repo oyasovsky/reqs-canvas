@@ -4,6 +4,7 @@ import { useAppStore } from "@/lib/store";
 import type { BR } from "@/lib/types";
 import { computeChecklist, computeMissingInfo } from "@/lib/checklist";
 import { ConfirmModal } from "@/components/ConfirmModal";
+import { mockFetch } from "@/lib/mockData";
 
 interface EditableAppsListProps {
   apps: any[];
@@ -126,7 +127,7 @@ export default function RightPane() {
 
   async function draftAC() {
     if (!br) return;
-    const res = await fetch("/api/draft-ac", {
+    const res = await mockFetch("/api/draft-ac", {
       method: "POST",
       body: JSON.stringify({ srtId: currentSrtId, brId: br.br_id })
     });
@@ -139,7 +140,7 @@ export default function RightPane() {
 
   async function draftNFRs() {
     if (!br) return;
-    const res = await fetch("/api/draft-nfrs", {
+    const res = await mockFetch("/api/draft-nfrs", {
       method: "POST",
       body: JSON.stringify({ srtId: currentSrtId, brId: br.br_id })
     });
@@ -152,7 +153,7 @@ export default function RightPane() {
 
   async function suggestApps() {
     if (!br) return;
-    const res = await fetch("/api/suggest-apps", {
+    const res = await mockFetch("/api/suggest-apps", {
       method: "POST",
       body: JSON.stringify({ srtId: currentSrtId, brId: br.br_id })
     });
@@ -163,7 +164,7 @@ export default function RightPane() {
   async function suggestDeps() {
     if (!br) return;
     const apps = br.impacted_applications?.map(a => a.app);
-    const res = await fetch("/api/suggest-deps", {
+    const res = await mockFetch("/api/suggest-deps", {
       method: "POST",
       body: JSON.stringify({ srtId: currentSrtId, brId: br.br_id, apps })
     });
@@ -175,7 +176,7 @@ export default function RightPane() {
     if (!br) return;
     try {
       setCreating(true);
-      const res = await fetch("/api/create-ado", {
+      const res = await mockFetch("/api/create-ado", {
         method: "POST",
         body: JSON.stringify({ confirm: true, brId: br.br_id })
       });
