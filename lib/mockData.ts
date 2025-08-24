@@ -17,27 +17,40 @@ export const mockResponses = {
               "User can select line to remove",
               "System calculates prorated charges", 
               "Line is deactivated immediately"
+            ],
+            nfrs: [
+              { category: "Performance", target: "Response time < 2 seconds", notes: "Critical for customer experience" },
+              { category: "Security", target: "Owner verification required", notes: "Prevent unauthorized changes" }
+            ],
+            risks: ["Proration calculation errors", "Service interruption during removal"],
+            assumptions: ["User has proper authorization", "Billing system can handle proration"],
+            constraints: ["Must complete within billing cycle", "Requires account owner approval"],
+            provenance: [
+              { source: "Customer Support", snippet: "Frequent request for family plan optimization" }
             ]
           }
         ],
         impacted_applications: [
-          { app: "BillingSvc", reason: "Calculate prorated charges", confidence: 0.9 },
-          { app: "AccountSvc", reason: "Update account structure", confidence: 0.9 }
+          { app: "BillingSvc", reason: "Calculate prorated charges", confidence: 0.9, provenance: [{ source: "Billing PO", snippet: "Cancel line triggers prorated refund in BillingSvc" }] },
+          { app: "AccountSvc", reason: "Update account structure", confidence: 0.9, provenance: [{ source: "Billing PO", snippet: "AccountSvc updates ownership" }] }
         ],
-        app_dependencies: [],
-        owners: [],
+        app_dependencies: [
+          { from: "AccountSvc", to: "BillingSvc", type: "API", confidence: 0.8, provenance: [{ source: "Architecture", snippet: "Account changes trigger billing updates" }] }
+        ],
+        owners: [
+          { role: "TPM", name: "Account Team Lead" },
+          { role: "SA", name: "Billing Architect" }
+        ],
         checklist: {
           title: "✔️",
           description: "✔️",
           capability_map: "✔️",
           impacted_apps: "✔️",
-          typed_dependencies: "❌",
+          typed_dependencies: "✔️",
           acceptance_criteria: "✔️",
-          nfrs: "⚠️",
-          risks: "❌",
-          assumptions: "❌",
-          constraints: "❌",
-          provenance: "✔️"
+          nfrs: "✔️",
+          risks_assumptions_constraints: "✔️",
+          owners: "✔️"
         },
         missing_info: []
       }

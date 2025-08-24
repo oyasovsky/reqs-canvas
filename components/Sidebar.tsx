@@ -13,10 +13,17 @@ export default function Sidebar() {
     if (srtId) {
       async function load() {
         try {
-          const res = await mockFetch("/api/parse", { method: "POST", body: JSON.stringify({ srtId }) });
-          if (res.ok) {
-            const data = await res.json();
-            setSrt(srtId, data.brs as BR[]);
+          // For static deployment, use the real SRT data directly
+          const selectedSrt = (srts as any).srts.find((s: any) => s.srt_id === srtId);
+          if (selectedSrt && selectedSrt.business_requirements) {
+            setSrt(srtId, selectedSrt.business_requirements as BR[]);
+          } else {
+            // Fallback to mock data if needed
+            const res = await mockFetch("/api/parse", { method: "POST", body: JSON.stringify({ srtId }) });
+            if (res.ok) {
+              const data = await res.json();
+              setSrt(srtId, data.brs as BR[]);
+            }
           }
         } catch (error) {
           console.error("Error loading SRT:", error);
