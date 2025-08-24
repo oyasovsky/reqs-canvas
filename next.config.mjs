@@ -3,7 +3,8 @@ const nextConfig = {
     experimental: {
       typedRoutes: true,
     },
-    output: 'export',
+    // Comment out static export for now since we have API routes
+    // output: 'export',
     trailingSlash: true,
     images: {
       unoptimized: true,
