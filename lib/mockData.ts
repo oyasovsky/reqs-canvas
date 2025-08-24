@@ -23,7 +23,23 @@ export const mockResponses = {
         impacted_applications: [
           { app: "BillingSvc", reason: "Calculate prorated charges", confidence: 0.9 },
           { app: "AccountSvc", reason: "Update account structure", confidence: 0.9 }
-        ]
+        ],
+        app_dependencies: [],
+        owners: [],
+        checklist: {
+          title: "✔️",
+          description: "✔️",
+          capability_map: "✔️",
+          impacted_apps: "✔️",
+          typed_dependencies: "❌",
+          acceptance_criteria: "✔️",
+          nfrs: "⚠️",
+          risks: "❌",
+          assumptions: "❌",
+          constraints: "❌",
+          provenance: "✔️"
+        },
+        missing_info: []
       }
     ]
   },

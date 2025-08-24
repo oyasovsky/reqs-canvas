@@ -92,7 +92,7 @@ export default function Sidebar() {
                   <div className="font-medium text-slate-800 text-sm mb-1 truncate">{b.br_id}</div>
                   <div className="text-xs text-slate-600 line-clamp-2 leading-relaxed">{b.title}</div>
                 </div>
-                <span className="badge ml-2 flex-shrink-0">{b.checklist.acceptance_criteria}</span>
+                <span className="badge ml-2 flex-shrink-0">{b.checklist?.acceptance_criteria || '❌'}</span>
               </div>
             </button>
           ))
